@@ -7,13 +7,13 @@ interface ApiResponse<T> {
   status: number;
 }
 
-class ApiClient {
+class ApiService {
   private baseURL: string;
-  private token: string | null = null;
+  private token: string | null;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-    this.token = localStorage.getItem('authToken');
+  constructor() {
+    this.baseURL = 'http://localhost:8000/api';
+    this.token = localStorage.getItem('token');
   }
 
   private async request<T>(

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './contexts/ThemeContext';
+import Preloader from './components/ui/Preloader';
 import { Layout } from './components/layout/Layout';
 import { Landing } from './pages/Landing';
 import { Dashboard } from './pages/Dashboard';
@@ -33,6 +34,7 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
+        <Preloader />
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
           <Routes>
             <Route path="/" element={<Landing />} />
