@@ -12,7 +12,7 @@ class ApiService {
   private token: string | null;
 
   constructor() {
-    this.baseURL = 'http://localhost:8000/api';
+    this.baseURL = API_BASE_URL;
     this.token = localStorage.getItem('token');
   }
 
@@ -195,4 +195,5 @@ class ApiService {
   }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL);
+const api = new ApiService();
+export default api;

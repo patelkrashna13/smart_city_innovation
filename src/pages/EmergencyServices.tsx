@@ -4,10 +4,14 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Phone, MapPin, Clock, Ambulance, Truck, Shield, AlertTriangle } from 'lucide-react';
+import { LeafletMap } from '../components/maps/LeafletMap';
+import { RouteSelector, RouteInfo } from '../components/maps/RouteSelector';
 
 export const EmergencyServices: React.FC = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState('all');
+  const [route, setRoute] = useState<RouteInfo | undefined>();
+  const [showTraffic, setShowTraffic] = useState(true);
 
   const emergencyServices = [
     { id: 1, type: 'Hospital', name: 'General Hospital', distance: '0.8 km', eta: '3 min', available: true },
@@ -196,20 +200,62 @@ export const EmergencyServices: React.FC = () => {
         </Card>
       </div>
 
-      <Card>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Emergency Services Map
-        </h3>
-        <div className="h-96 bg-gradient-to-br from-red-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-xl flex items-center justify-center">
-          <div className="text-center">
-            <MapPin size={48} className="text-red-500 mx-auto mb-4" />
-            <p className="text-gray-600 dark:text-gray-400">Interactive emergency services map</p>
-            <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-              Real-time locations and response routes
-            </p>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Emergency Services Map
+            </h3>
+            <div className="relative">
+              <LeafletMap 
+                center={[40.7128, -74.0060]} 
+                zoom={13} 
+                className="h-96 rounded-xl" 
+                markers={[
+                  ...emergencyServices.map(service => ({
+                    position: [
+                      40.7128 + (Math.random() - 0.5) * 0.02, 
+                      -74.0060 + (Math.random() - 0.5) * 0.02
+                    ] as [number, number],
+                    popup: `<b>${service.name}</b><br>${service.type}<br>ETA: ${service.eta}`,
+                    color: service.type === 'Hospital' ? 'red' : 
+                           service.type === 'Fire Station' ? 'orange' : 'blue'
+                  })),
+                  ...activeIncidents.map(incident => ({
+                    position: [
+                      40.7128 + (Math.random() - 0.5) * 0.03, 
+                      -74.0060 + (Math.random() - 0.5) * 0.03
+                    ] as [number, number],
+                    popup: `<b>${incident.type} Emergency</b><br>${incident.location}<br>Status: ${incident.status}`,
+                    color: incident.priority === 'critical' ? 'red' : 
+                           incident.priority === 'high' ? 'orange' : 'yellow'
+                  }))
+                ]}
+                route={route}
+                showTraffic={showTraffic}
+              />
+              <div className="absolute top-4 right-4 z-10">
+                <Button 
+                  size="sm" 
+                  variant={showTraffic ? 'primary' : 'outline'}
+                  onClick={() => setShowTraffic(!showTraffic)}
+                  className="flex items-center space-x-1"
+                >
+                  <AlertTriangle size={14} />
+                  <span>Traffic</span>
+                </Button>
+              </div>
+            </div>
+          </Card>
         </div>
-      </Card>
+        
+        <div>
+          <RouteSelector 
+            onRouteSelect={(routeInfo) => setRoute(routeInfo)} 
+            className="h-full"
+          />
+        </div>
+      </div>
 
       <Modal
         isOpen={isReportModalOpen}

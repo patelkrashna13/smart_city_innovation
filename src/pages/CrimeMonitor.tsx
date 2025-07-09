@@ -3,10 +3,14 @@ import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Shield, MapPin, TrendingDown, TrendingUp, AlertTriangle, Eye } from 'lucide-react';
+import { LeafletMap } from '../components/maps/LeafletMap';
+import { RouteSelector, RouteInfo } from '../components/maps/RouteSelector';
 
 export const CrimeMonitor: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('week');
   const [selectedCrimeType, setSelectedCrimeType] = useState('all');
+  const [route, setRoute] = useState<RouteInfo | undefined>();
+  const [showTraffic, setShowTraffic] = useState(false);
 
   const crimeStats = {
     week: { total: 23, theft: 8, vandalism: 5, assault: 3, other: 7, trend: -12 },
@@ -32,21 +36,43 @@ export const CrimeMonitor: React.FC = () => {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'high': return 'text-red-600 bg-red-100 dark:bg-red-900/20 dark:text-red-300';
+      case 'medium': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-300';
+      case 'low': return 'text-green-600 bg-green-100 dark:bg-green-900/20 dark:text-green-300';
+      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'high': return 'text-red-600 bg-red-100 dark:bg-red-900/20 dark:text-red-300';
+      case 'medium': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-300';
+      case 'low': return 'text-green-600 bg-green-100 dark:bg-green-900/20 dark:text-green-300';
+      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-800 dark:text-gray-300';
     }
   };
+  
+  const handleRouteSelect = (routeInfo: RouteInfo) => {
+    setRoute(routeInfo);
+    setShowTraffic(routeInfo.avoidTraffic);
+  };
+  
+  const mapCenter: [number, number] = [51.505, -0.09]; // Default center, replace with your city coordinates
+  
+  const incidentMarkers = recentIncidents.map(incident => ({
+    position: [51.505 + (Math.random() - 0.5) * 0.03, -0.09 + (Math.random() - 0.5) * 0.03] as [number, number],
+    popup: `<b>${incident.type}</b><br>${incident.location}<br>${incident.time}`,
+    color: incident.severity === 'high' ? 'red' : incident.severity === 'medium' ? 'yellow' : 'green'
+  }));
+  
+  const hotspotMarkers = hotspots.map(hotspot => ({
+    position: [51.505 + (Math.random() - 0.5) * 0.02, -0.09 + (Math.random() - 0.5) * 0.02] as [number, number],
+    popup: `<b>${hotspot.area}</b><br>Risk: ${hotspot.risk}<br>Incidents: ${hotspot.incidents}`,
+    color: hotspot.risk === 'high' ? 'red' : hotspot.risk === 'medium' ? 'yellow' : 'green'
+  }));
+  
+  // Combine all markers
+  const allMarkers = [...incidentMarkers, ...hotspotMarkers];
 
   return (
     <motion.div
@@ -143,19 +169,20 @@ export const CrimeMonitor: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <Card className="lg:col-span-2">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Crime Heatmap
           </h3>
-          <div className="h-80 bg-gradient-to-br from-red-50 via-yellow-50 to-green-50 dark:from-gray-800 dark:to-gray-700 rounded-xl flex items-center justify-center mb-4">
-            <div className="text-center">
-              <MapPin size={48} className="text-red-500 mx-auto mb-4" />
-              <p className="text-gray-600 dark:text-gray-400">Interactive crime heatmap</p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                Real-time incident visualization
-              </p>
-            </div>
+          <div className="h-[400px] rounded-xl overflow-hidden mb-4">
+            <LeafletMap 
+              center={mapCenter}
+              zoom={14}
+              markers={allMarkers}
+              route={route}
+              showTraffic={showTraffic}
+              className="h-full w-full"
+            />
           </div>
           
           <div className="grid grid-cols-4 gap-2">
@@ -175,11 +202,11 @@ export const CrimeMonitor: React.FC = () => {
           </div>
         </Card>
 
-        <Card>
+        <Card className="lg:col-span-2">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Recent Incidents
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-4 mb-4">
             {recentIncidents.map((incident, index) => (
               <motion.div
                 key={incident.id}
@@ -214,6 +241,7 @@ export const CrimeMonitor: React.FC = () => {
               </motion.div>
             ))}
           </div>
+          <RouteSelector onRouteSelect={handleRouteSelect} />
         </Card>
       </div>
 

@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { Droplet, Thermometer, Activity, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Droplet, Thermometer, Activity, AlertTriangle, CheckCircle, MapPin } from 'lucide-react';
+import { LeafletMap } from '../components/maps/LeafletMap';
+import { RouteSelector, RouteInfo } from '../components/maps/RouteSelector';
 
 export const WaterSupply: React.FC = () => {
+  const [selectedArea, setSelectedArea] = useState<string | null>(null);
+  const [route, setRoute] = useState<RouteInfo | undefined>();
+  const [showTraffic, setShowTraffic] = useState(false);
+  
   const waterQualityData = [
     { parameter: 'pH Level', value: 7.2, range: '6.5-8.5', status: 'good', unit: '' },
     { parameter: 'Chlorine', value: 0.8, range: '0.2-1.0', status: 'good', unit: 'mg/L' },
@@ -30,12 +36,25 @@ export const WaterSupply: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'excellent': return 'text-green-600 bg-green-100';
-      case 'good': return 'text-blue-600 bg-blue-100';
-      case 'low': return 'text-yellow-600 bg-yellow-100';
-      default: return 'text-red-600 bg-red-100';
+      case 'excellent': return 'text-green-600 bg-green-100 dark:bg-green-900/20 dark:text-green-300';
+      case 'good': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20 dark:text-blue-300';
+      case 'low': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-300';
+      default: return 'text-red-600 bg-red-100 dark:bg-red-900/20 dark:text-red-300';
     }
   };
+  
+  const handleRouteSelect = (routeInfo: RouteInfo) => {
+    setRoute(routeInfo);
+    setShowTraffic(routeInfo.avoidTraffic);
+  };
+  
+  const mapCenter: [number, number] = [51.505, -0.09]; // Default center, replace with your city coordinates
+  
+  const waterMarkers = supplyStatus.map((area, index) => ({
+    position: [51.505 + (Math.random() - 0.5) * 0.03, -0.09 + (Math.random() - 0.5) * 0.03] as [number, number],
+    popup: `<b>${area.area}</b><br>Pressure: ${area.pressure} PSI<br>Flow: ${area.flow}%`,
+    color: area.status === 'excellent' ? 'green' : area.status === 'normal' ? 'blue' : 'yellow'
+  }));
 
   return (
     <motion.div
@@ -178,20 +197,27 @@ export const WaterSupply: React.FC = () => {
         </Card>
       </div>
 
-      <Card>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Water Distribution Network
-        </h3>
-        <div className="h-96 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-800 dark:to-gray-700 rounded-xl flex items-center justify-center">
-          <div className="text-center">
-            <Droplet size={48} className="text-blue-500 mx-auto mb-4" />
-            <p className="text-gray-600 dark:text-gray-400">Interactive water distribution map</p>
-            <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-              Real-time pressure monitoring and leak detection
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <Card className="lg:col-span-3">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Water Distribution Network
+          </h3>
+          <div className="h-[500px] rounded-xl overflow-hidden">
+            <LeafletMap 
+              center={mapCenter}
+              zoom={14}
+              markers={waterMarkers}
+              route={route}
+              showTraffic={showTraffic}
+              className="h-full w-full"
+            />
           </div>
-        </div>
-      </Card>
+        </Card>
+        
+        <Card>
+          <RouteSelector onRouteSelect={handleRouteSelect} />
+        </Card>
+      </div>
     </motion.div>
   );
 };

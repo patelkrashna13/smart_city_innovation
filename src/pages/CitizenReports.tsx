@@ -4,12 +4,16 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { MessageSquare, Plus, MapPin, Clock, CheckCircle, AlertCircle, User } from 'lucide-react';
+import { MessageSquare, Plus, MapPin, Clock, CheckCircle, AlertCircle, User, AlertTriangle } from 'lucide-react';
+import { LeafletMap } from '../components/maps/LeafletMap';
+import { RouteSelector, RouteInfo } from '../components/maps/RouteSelector';
 
 export const CitizenReports: React.FC = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [reportStep, setReportStep] = useState(1);
+  const [route, setRoute] = useState<RouteInfo | undefined>();
+  const [showTraffic, setShowTraffic] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Reports', count: 156 },
@@ -169,6 +173,53 @@ export const CitizenReports: React.FC = () => {
             </Card>
           </motion.div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <Card className="lg:col-span-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Report Locations
+          </h3>
+          <div className="h-[400px] rounded-xl overflow-hidden mb-4">
+            <LeafletMap 
+              center={[51.505, -0.09]}
+              zoom={14}
+              markers={filteredReports.map(report => ({
+                position: [
+                  51.505 + (Math.random() * 0.02 - 0.01), 
+                  -0.09 + (Math.random() * 0.02 - 0.01)
+                ] as [number, number],
+                popup: `<b>${report.title}</b><br/>${report.location}<br/>Status: ${report.status}`,
+                color: report.priority === 'high' ? 'red' : report.priority === 'medium' ? 'yellow' : 'green'
+              }))}
+              route={route}
+              showTraffic={showTraffic}
+              darkMode={false}
+            />
+          </div>
+          <div className="flex justify-between items-center">
+            <Button 
+              size="sm" 
+              variant={showTraffic ? "primary" : "outline"}
+              onClick={() => setShowTraffic(!showTraffic)}
+              className="flex items-center gap-2"
+            >
+              <AlertTriangle size={16} />
+              {showTraffic ? "Hide Traffic" : "Show Traffic"}
+            </Button>
+          </div>
+        </Card>
+        
+        <Card>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Plan Route to Report
+          </h3>
+          <RouteSelector
+            onRouteSelect={(routeData) => setRoute(routeData)}
+            defaultSource={[51.505, -0.09]}
+            defaultDestination={[51.51, -0.1]}
+          />
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">

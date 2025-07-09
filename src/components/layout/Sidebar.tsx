@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Car, Navigation, Bus, Trash2, Zap, Droplet,
   Phone, Shield, MessageSquare, TreePine, Bell,
-  PieChart, Building, Bot, Menu, X
+  PieChart, Building, Bot, Menu, X, Map
 } from 'lucide-react';
 
 const menuItems = [
@@ -18,6 +18,7 @@ const menuItems = [
   { path: '/emergency', icon: Phone, label: 'Emergency' },
   { path: '/crime', icon: Shield, label: 'Crime Monitor' },
   { path: '/reports', icon: MessageSquare, label: 'Citizen Reports' },
+  { path: '/map-demo', icon: Map, label: 'Map Demo' },
   { path: '/trees', icon: TreePine, label: 'Tree Tracker' },
   { path: '/alerts', icon: Bell, label: 'Civic Alerts' },
   { path: '/budget', icon: PieChart, label: 'Budget' },

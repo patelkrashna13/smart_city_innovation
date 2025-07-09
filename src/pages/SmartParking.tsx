@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
-import { Car, MapPin, Clock, DollarSign } from 'lucide-react';
+import { Car, MapPin, Clock, DollarSign, AlertTriangle } from 'lucide-react';
+import { LeafletMap } from '../components/maps/LeafletMap';
+import { RouteSelector } from '../components/maps/RouteSelector';
+import { Button } from '../components/ui/Button';
 
 export const SmartParking: React.FC = () => {
+  const [route, setRoute] = useState<{
+    source: string;
+    destination: string;
+    vehicleType: 'car' | 'bus' | 'bike' | 'walk';
+    avoidTraffic: boolean;
+  } | null>(null);
+  const [showTraffic, setShowTraffic] = useState(false);
+
   const parkingLots = [
     { id: 1, name: 'Central Mall', available: 45, total: 120, price: '$2/hr', distance: '0.2 km' },
     { id: 2, name: 'City Hall', available: 23, total: 80, price: '$1.5/hr', distance: '0.5 km' },
@@ -32,11 +43,31 @@ export const SmartParking: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Parking Map
           </h3>
-          <div className="h-96 bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-800 dark:to-gray-700 rounded-xl flex items-center justify-center">
-            <div className="text-center">
-              <MapPin size={48} className="text-blue-500 mx-auto mb-4" />
-              <p className="text-gray-600 dark:text-gray-400">Interactive parking map</p>
-            </div>
+          <div className="h-96 rounded-xl overflow-hidden">
+            <LeafletMap 
+              center={[51.505, -0.09]} 
+              zoom={13} 
+              markers={parkingLots.map(lot => ({
+                position: [
+                  51.505 + (Math.random() * 0.01 - 0.005), 
+                  -0.09 + (Math.random() * 0.01 - 0.005)
+                ] as [number, number],
+                popup: `<b>${lot.name}</b><br/>Available: ${lot.available}/${lot.total}<br/>Price: ${lot.price}`,
+              }))}
+              route={route}
+              showTraffic={showTraffic}
+            />
+          </div>
+          <div className="mt-4 flex justify-between items-center">
+            <Button 
+              size="sm" 
+              variant={showTraffic ? "primary" : "outline"}
+              onClick={() => setShowTraffic(!showTraffic)}
+              className="flex items-center gap-2"
+            >
+              <AlertTriangle size={16} />
+              {showTraffic ? "Hide Traffic" : "Show Traffic"}
+            </Button>
           </div>
         </Card>
 
@@ -63,6 +94,17 @@ export const SmartParking: React.FC = () => {
                 <span className="font-semibold text-gray-900 dark:text-white">68%</span>
               </div>
             </div>
+          </Card>
+          
+          <Card>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Find Route to Parking
+            </h3>
+            <RouteSelector
+              onRouteSelect={(routeData) => setRoute(routeData)}
+              defaultSource="Current Location"
+              defaultDestination="Central Mall Parking"
+            />
           </Card>
         </div>
       </div>

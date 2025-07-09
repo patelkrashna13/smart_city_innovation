@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Zap, Building, TrendingUp, TrendingDown, Lightbulb } from 'lucide-react';
+import { Zap, Building, TrendingUp, TrendingDown, Lightbulb, MapPin, AlertTriangle } from 'lucide-react';
+import { LeafletMap } from '../components/maps/LeafletMap';
+import { RouteSelector, RouteInfo } from '../components/maps/RouteSelector';
 
 export const EnergyConsumption: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('today');
   const [selectedBuilding, setSelectedBuilding] = useState('all');
+  const [route, setRoute] = useState<RouteInfo | undefined>();
+  const [showTraffic, setShowTraffic] = useState(true);
 
   const buildings = [
     { id: 'city-hall', name: 'City Hall', consumption: 245, trend: 'up', efficiency: 85 },
@@ -142,6 +146,51 @@ export const EnergyConsumption: React.FC = () => {
             ))}
           </div>
         </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="lg:col-span-2">
+          <Card>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Energy Infrastructure Map
+            </h3>
+            <div className="relative">
+              <LeafletMap 
+                center={[40.7128, -74.0060]} 
+                zoom={13} 
+                className="h-96 rounded-xl" 
+                markers={buildings.map((building, index) => ({
+                  position: [
+                    40.7128 + (Math.random() - 0.5) * 0.02, 
+                    -74.0060 + (Math.random() - 0.5) * 0.02
+                  ] as [number, number],
+                  popup: `<b>${building.name}</b><br>Consumption: ${building.consumption} kWh<br>Efficiency: ${building.efficiency}%`,
+                  color: building.trend === 'up' ? 'red' : 'green'
+                }))}
+                route={route}
+                showTraffic={showTraffic}
+              />
+              <div className="absolute top-4 right-4 z-10">
+                <Button 
+                  size="sm" 
+                  variant={showTraffic ? 'primary' : 'outline'}
+                  onClick={() => setShowTraffic(!showTraffic)}
+                  className="flex items-center space-x-1"
+                >
+                  <AlertTriangle size={14} />
+                  <span>Traffic</span>
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+        
+        <div>
+          <RouteSelector 
+            onRouteSelect={(routeInfo) => setRoute(routeInfo)} 
+            className="h-full"
+          />
+        </div>
       </div>
     </motion.div>
   );

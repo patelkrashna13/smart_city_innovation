@@ -19,6 +19,7 @@ import { TreeTracker } from './pages/TreeTracker';
 import { BudgetTracker } from './pages/BudgetTracker';
 import { LocalBusinesses } from './pages/LocalBusinesses';
 import { AIAssistant } from './pages/AIAssistant';
+import MapDemo from './pages/MapDemo';
 
 // Placeholder component for alerts page
 const CivicAlerts: React.FC = () => (
@@ -48,6 +49,7 @@ function App() {
             <Route path="/emergency" element={<Layout><EmergencyServices /></Layout>} />
             <Route path="/crime" element={<Layout><CrimeMonitor /></Layout>} />
             <Route path="/reports" element={<Layout><CitizenReports /></Layout>} />
+            <Route path="/map-demo" element={<Layout><MapDemo /></Layout>} />
             <Route path="/trees" element={<Layout><TreeTracker /></Layout>} />
             <Route path="/alerts" element={<Layout><CivicAlerts /></Layout>} />
             <Route path="/budget" element={<Layout><BudgetTracker /></Layout>} />
