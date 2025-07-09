@@ -7,7 +7,7 @@ const Preloader = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(false);
-    }, 3000);
+    }, 4000);
 
     const opacityTimer = setInterval(() => {
       setTitleOpacity(prev => Math.min(1, prev + 0.1));
