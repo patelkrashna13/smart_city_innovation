@@ -12,7 +12,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Sidebar />
       <div className="ml-64 transition-all duration-300">
         <Header />
-        <main className="p-6">
+        <main className="p-6 pt-16">
           {children}
         </main>
       </div>

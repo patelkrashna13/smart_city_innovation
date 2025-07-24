@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { ArrowRight, Building, Car, Zap, TreePine } from 'lucide-react';
+import { NewsFeed } from '../components/ui/NewsFeed';
+import { QuickLinks } from '../components/ui/QuickLinks';
+import { InfoSection } from '../components/ui/InfoSection';
 
 export const Landing: React.FC = () => {
   return (
@@ -38,6 +41,7 @@ export const Landing: React.FC = () => {
 
         <div className="relative z-10 container mx-auto px-4 py-20">
           <div className="text-center">
+            {/* Hero Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -54,10 +58,12 @@ export const Landing: React.FC = () => {
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
                 Monitor, manage, and optimize your city's infrastructure with our comprehensive 
-                real-time dashboard. Built for the future of urban management.
+                real-time dashboard. Built for the future of urban management.<br/>
+                <span className="text-base text-gray-500 dark:text-gray-400">Empowering city officials and citizens with AI-driven insights, sustainability tracking, and transparent governance.</span>
               </p>
             </motion.div>
 
+            {/* Call to Action */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -75,7 +81,7 @@ export const Landing: React.FC = () => {
               </Button>
             </motion.div>
 
-            {/* Feature cards */}
+            {/* Feature cards - expanded */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
@@ -83,10 +89,10 @@ export const Landing: React.FC = () => {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-20"
             >
               {[
-                { icon: Building, title: 'Infrastructure', desc: 'Monitor city buildings and facilities' },
-                { icon: Car, title: 'Transportation', desc: 'Track traffic and public transport' },
-                { icon: Zap, title: 'Energy', desc: 'Optimize power consumption' },
-                { icon: TreePine, title: 'Environment', desc: 'Track green initiatives' }
+                { icon: Building, title: 'Infrastructure', desc: 'Monitor city buildings, utilities, and facilities for maintenance and upgrades.' },
+                { icon: Car, title: 'Transportation', desc: 'Track traffic, public transport, and optimize routes for efficiency.' },
+                { icon: Zap, title: 'Energy', desc: 'Analyze and optimize power consumption, promote renewable sources.' },
+                { icon: TreePine, title: 'Environment', desc: 'Track air quality, green initiatives, and waste management.' }
               ].map((feature, index) => (
                 <motion.div
                   key={feature.title}
@@ -107,6 +113,15 @@ export const Landing: React.FC = () => {
               ))}
             </motion.div>
           </div>
+
+          {/* New Sections: NewsFeed and QuickLinks */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20">
+            <NewsFeed />
+            <QuickLinks />
+          </div>
+
+          {/* About/Contact Section */}
+          <InfoSection />
         </div>
 
         {/* Cityscape illustration */}

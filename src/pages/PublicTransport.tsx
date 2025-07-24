@@ -90,7 +90,7 @@ export const PublicTransport: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden z-10">
             <div className="relative">
               <LeafletMap
                 center={[37.7749, -122.4194]}

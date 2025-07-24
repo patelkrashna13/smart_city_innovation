@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -32,10 +32,22 @@ const CivicAlerts: React.FC = () => (
 );
 
 function App() {
+  const [showPreloader, setShowPreloader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPreloader(false);
+    }, 4000); // 4 seconds
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showPreloader) {
+    return <Preloader />;
+  }
+
   return (
     <ThemeProvider>
       <Router>
-        <Preloader />
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
           <Routes>
             <Route path="/" element={<Landing />} />

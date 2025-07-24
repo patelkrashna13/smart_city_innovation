@@ -1,26 +1,18 @@
 import { useEffect, useState } from 'react';
 
 const Preloader = () => {
-  const [show, setShow] = useState(true);
   const [titleOpacity, setTitleOpacity] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShow(false);
-    }, 4000);
-
     const opacityTimer = setInterval(() => {
       setTitleOpacity(prev => Math.min(1, prev + 0.1));
     }, 300);
-
     return () => {
-      clearTimeout(timer);
       clearInterval(opacityTimer);
     };
   }, []);
 
-  if (!show) return null;
-
+  // Always render the preloader when mounted
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black transition-all duration-500">
       <div className="relative w-[70vw] h-[70vh] flex flex-col items-center justify-center">

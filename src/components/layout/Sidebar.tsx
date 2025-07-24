@@ -1,29 +1,44 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
 import {
-  Home, Car, Navigation, Bus, Trash2, Zap, Droplet,
-  Phone, Shield, MessageSquare, TreePine, Bell,
-  PieChart, Building, Bot, Menu, X, Map
-} from 'lucide-react';
+  Home,
+  Car,
+  Navigation,
+  Bus,
+  Trash2,
+  Zap,
+  Droplet,
+  Phone,
+  Shield,
+  MessageSquare,
+  TreePine,
+  Bell,
+  PieChart,
+  Building,
+  Bot,
+  Menu,
+  X,
+  Map,
+} from "lucide-react";
 
 const menuItems = [
-  { path: '/', icon: Home, label: 'Dashboard' },
-  { path: '/parking', icon: Car, label: 'Smart Parking' },
-  { path: '/traffic', icon: Navigation, label: 'Traffic' },
-  { path: '/transport', icon: Bus, label: 'Transport' },
-  { path: '/waste', icon: Trash2, label: 'Waste Management' },
-  { path: '/energy', icon: Zap, label: 'Energy' },
-  { path: '/water', icon: Droplet, label: 'Water Supply' },
-  { path: '/emergency', icon: Phone, label: 'Emergency' },
-  { path: '/crime', icon: Shield, label: 'Crime Monitor' },
-  { path: '/reports', icon: MessageSquare, label: 'Citizen Reports' },
-  { path: '/map-demo', icon: Map, label: 'Map Demo' },
-  { path: '/trees', icon: TreePine, label: 'Tree Tracker' },
-  { path: '/alerts', icon: Bell, label: 'Civic Alerts' },
-  { path: '/budget', icon: PieChart, label: 'Budget' },
-  { path: '/business', icon: Building, label: 'Businesses' },
-  { path: '/ai-assistant', icon: Bot, label: 'AI Assistant' }
+  { path: "/", icon: Home, label: "Dashboard" },
+  { path: "/parking", icon: Car, label: "Smart Parking" },
+  { path: "/traffic", icon: Navigation, label: "Traffic" },
+  { path: "/transport", icon: Bus, label: "Transport" },
+  { path: "/waste", icon: Trash2, label: "Waste Management" },
+  { path: "/energy", icon: Zap, label: "Energy" },
+  { path: "/water", icon: Droplet, label: "Water Supply" },
+  { path: "/emergency", icon: Phone, label: "Emergency" },
+  { path: "/crime", icon: Shield, label: "Crime Monitor" },
+  { path: "/reports", icon: MessageSquare, label: "Citizen Reports" },
+  { path: "/map-demo", icon: Map, label: "Map Demo" },
+  { path: "/trees", icon: TreePine, label: "Tree Tracker" },
+  { path: "/alerts", icon: Bell, label: "Civic Alerts" },
+  { path: "/budget", icon: PieChart, label: "Budget" },
+  { path: "/business", icon: Building, label: "Businesses" },
+  { path: "/ai-assistant", icon: Bot, label: "AI Assistant" },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -34,13 +49,13 @@ export const Sidebar: React.FC = () => {
     <>
       <motion.div
         className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-40 transition-all duration-300 ${
-          isCollapsed ? 'w-16' : 'w-64'
+          isCollapsed ? "w-16" : "w-64"
         }`}
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-900 z-50">
           <AnimatePresence>
             {!isCollapsed && (
               <motion.div
@@ -50,7 +65,9 @@ export const Sidebar: React.FC = () => {
                 className="flex items-center space-x-2"
               >
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg"></div>
-                <span className="font-bold text-lg text-gray-900 dark:text-white">Smart City</span>
+                <span className="font-bold text-lg text-gray-900 dark:text-white">
+                  Smart City
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -62,11 +79,17 @@ export const Sidebar: React.FC = () => {
           </button>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-64px)] scrollbar-none hide-scrollbar">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
-            
+            const iconSize = isCollapsed ? 28 : 20;
+            const iconColor = isCollapsed
+              ? isActive
+                ? 'text-blue-500'
+                : 'text-gray-700 dark:text-gray-300'
+              : '';
+
             return (
               <Link key={item.path} to={item.path}>
                 <motion.div
@@ -77,8 +100,9 @@ export const Sidebar: React.FC = () => {
                   }`}
                   whileHover={{ x: 4 }}
                   whileTap={{ scale: 0.98 }}
+                  title={isCollapsed ? item.label : undefined}
                 >
-                  <Icon size={20} />
+                  <Icon size={iconSize} className={iconColor} />
                   <AnimatePresence>
                     {!isCollapsed && (
                       <motion.span
@@ -97,7 +121,11 @@ export const Sidebar: React.FC = () => {
           })}
         </nav>
       </motion.div>
-      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
+      <div
+        className={`transition-all duration-300 ${
+          isCollapsed ? "ml-16" : "ml-64"
+        }`}
+      >
         {/* Content goes here */}
       </div>
     </>
